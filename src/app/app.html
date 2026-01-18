@@ -1,115 +1,151 @@
-<form [formGroup]="form" (ngSubmit)="onRegister()" class="card">
-  <h2>Mini CRM - Company Registration</h2>
+<div class="wrap">
+  <form [formGroup]="form" (ngSubmit)="onRegister()" class="card">
+    <h2>Mini CRM - Company Registration</h2>
 
-  <div class="grid">
-    <div class="field">
-      <label>Company name *</label>
-      <input formControlName="companyName" placeholder="e.g. UAB Example" />
-      <div class="error" *ngIf="isInvalid('companyName')">
-        <span *ngIf="form.get('companyName')?.errors?.['required']">Required.</span>
-        <span *ngIf="form.get('companyName')?.errors?.['minlength']">Min 2 characters.</span>
-        <span *ngIf="form.get('companyName')?.errors?.['maxlength']">Max 30 characters.</span>
+
+    <div class="msg success" *ngIf="saveSuccess()">{{ saveSuccess() }}</div>
+    <div class="msg error" *ngIf="saveError()">{{ saveError() }}</div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Company name *</label>
+        <input formControlName="companyName" placeholder="e.g. UAB Example" />
+        <div class="error-text" *ngIf="isInvalid('companyName')">
+          <span *ngIf="form.get('companyName')?.errors?.['required']">Required.</span>
+          <span *ngIf="form.get('companyName')?.errors?.['minlength']">Min 2 characters.</span>
+          <span *ngIf="form.get('companyName')?.errors?.['maxlength']">Max 30 characters.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Company code (numbers only)</label>
+        <input formControlName="companyCode" placeholder="e.g. 123456789" />
+        <div class="error-text" *ngIf="isInvalid('companyCode')">Numbers only.</div>
+      </div>
+
+      <div class="field">
+        <label>VAT registration code</label>
+        <input formControlName="vatCode" placeholder="e.g. LT123456789 or 123456789" />
+        <div class="error-text" *ngIf="isInvalid('vatCode')">
+          Must be digits only or start with LT + digits.
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Address</label>
+        <input formControlName="address" placeholder="e.g. Vilnius, LT" />
+      </div>
+
+      <div class="field">
+        <label>Email address *</label>
+        <input formControlName="email" placeholder="name@company.com" />
+        <div class="error-text" *ngIf="isInvalid('email')">
+          <span *ngIf="form.get('email')?.errors?.['required']">Required.</span>
+          <span *ngIf="form.get('email')?.errors?.['email']">Invalid email format.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Phone number</label>
+        <input formControlName="phone" placeholder="+37065312345" />
+        <div class="error-text" *ngIf="isInvalid('phone')">
+          <span *ngIf="form.get('phone')?.errors?.['phoneFormat']">
+            Must start with + and contain digits only.
+          </span>
+          <span *ngIf="form.get('phone')?.errors?.['phoneLength']">
+            Length must be 10-12 characters.
+          </span>
+        </div>
       </div>
     </div>
 
-    <div class="field">
-      <label>Company code (numbers only)</label>
-      <input formControlName="companyCode" placeholder="e.g. 123456789" />
-      <div class="error" *ngIf="isInvalid('companyCode')">Numbers only.</div>
-    </div>
+    <hr />
 
-    <div class="field">
-      <label>VAT registration code</label>
-      <input formControlName="vatCode" placeholder="e.g. LT123456789 or 123456789" />
-      <div class="error" *ngIf="isInvalid('vatCode')">
-        Must be digits only or start with LT + digits.
-      </div>
-    </div>
+    <h3>Contacts</h3>
 
-    <div class="field">
-      <label>Address</label>
-      <input formControlName="address" placeholder="e.g. Vilnius, LT" />
-    </div>
-
-    <div class="field">
-      <label>Email address *</label>
-      <input formControlName="email" placeholder="name@company.com" />
-      <div class="error" *ngIf="isInvalid('email')">
-        <span *ngIf="form.get('email')?.errors?.['required']">Required.</span>
-        <span *ngIf="form.get('email')?.errors?.['email']">Invalid email format.</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Phone number</label>
-      <input formControlName="phone" placeholder="+37065312345" />
-      <div class="error" *ngIf="isInvalid('phone')">
-        <span *ngIf="form.get('phone')?.errors?.['phoneFormat']">
-          Must start with + and contain digits only.
-        </span>
-        <span *ngIf="form.get('phone')?.errors?.['phoneLength']">
-          Length must be 10-12 characters.
-        </span>
-        <span *ngIf="form.get('phone')?.errors?.['phonePrefix']">
-          Must start with +370.
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <hr />
-
-  <h3>Contacts</h3>
-
-  <div formArrayName="contacts" class="contacts">
-    <div class="contact" *ngFor="let c of contacts.controls; let i = index" [formGroupName]="i">
-      <div class="contact-header">
-        <strong>Contact #{{ i + 1 }}</strong>
-        <button type="button" (click)="removeContact(i)" [disabled]="contacts.length === 1">
-          Remove
-        </button>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label>First name *</label>
-          <input formControlName="firstName" placeholder="e.g. Jonas" />
-          <div class="error" *ngIf="contactInvalid(i, 'firstName')">Required.</div>
+    <div formArrayName="contacts" class="contacts">
+      <div class="contact" *ngFor="let c of contacts.controls; let i = index" [formGroupName]="i">
+        <div class="contact-header">
+          <strong>Contact #{{ i + 1 }}</strong>
+          <button type="button" (click)="removeContact(i)" [disabled]="contacts.length === 1">
+            Remove
+          </button>
         </div>
 
-        <div class="field">
-          <label>Last name *</label>
-          <input formControlName="lastName" placeholder="e.g. Jonaitis" />
-          <div class="error" *ngIf="contactInvalid(i, 'lastName')">Required.</div>
-        </div>
+        <div class="grid">
+          <div class="field">
+            <label>First name *</label>
+            <input formControlName="firstName" placeholder="e.g. Jonas" />
+            <div class="error-text" *ngIf="contactInvalid(i, 'firstName')">Required.</div>
+          </div>
 
-        <div class="field">
-          <label>Position</label>
-          <input formControlName="position" placeholder="e.g. Manager" />
-        </div>
+          <div class="field">
+            <label>Last name *</label>
+            <input formControlName="lastName" placeholder="e.g. Jonaitis" />
+            <div class="error-text" *ngIf="contactInvalid(i, 'lastName')">Required.</div>
+          </div>
 
-        <div class="field">
-          <label>Phone number</label>
-          <input formControlName="phone" placeholder="+37065312345" />
-          <div class="error" *ngIf="contactInvalid(i, 'phone')">
-            <span *ngIf="contacts.at(i).get('phone')?.errors?.['phoneFormat']">
-              Must start with + and contain digits only.
-            </span>
-            <span *ngIf="contacts.at(i).get('phone')?.errors?.['phoneLength']">
-              Length must be 10-12 characters.
-            </span>
-            <span *ngIf="contacts.at(i).get('phone')?.errors?.['phonePrefix']">
-              Must start with +370.
-            </span>
+          <div class="field">
+            <label>Position</label>
+            <input formControlName="position" placeholder="e.g. Manager" />
+          </div>
+
+          <div class="field">
+            <label>Phone number</label>
+            <input formControlName="phone" placeholder="+37065312345" />
           </div>
         </div>
       </div>
     </div>
+
+    <button type="button" (click)="addContact()">+ Add contact</button>
+
+    <hr/>
+
+    <button type="submit" [disabled]="isSaving()">
+      {{ isSaving() ? 'Saving...' : 'Register' }}
+    </button>
+  </form>
+
+  <div class="card">
+    <h2>Saved Companies</h2>
+
+    <div class="msg error" *ngIf="loadError()">{{ loadError() }}</div>
+
+    <div class="loading" *ngIf="isLoading()">
+      Loading companies...
+    </div>
+
+    <div *ngIf="!isLoading() && companies().length === 0" class="empty">
+      No companies saved yet.
+    </div>
+
+    <div class="list" *ngIf="!isLoading() && companies().length > 0">
+      <div class="item" *ngFor="let company of companies()">
+        <div class="item-head">
+          <strong>{{ company.companyName }}</strong>
+          <button type="button" (click)="onDelete(company.id)">Delete</button>
+        </div>
+
+        <div class="meta">
+          <div><b>Email:</b> {{ company.email }}</div>
+          <div><b>Phone:</b> {{ company.phone || '-' }}</div>
+          <div><b>Code:</b> {{ company.companyCode || '-' }}</div>
+          <div><b>VAT:</b> {{ company.vatCode || '-' }}</div>
+          <div><b>Address:</b> {{ company.address || '-' }}</div>
+        </div>
+
+        <div class="contacts-view">
+          <b>Contacts:</b>
+          <ul>
+            <li *ngFor="let c of company.contacts">
+              {{ c.firstName }} {{ c.lastName }}
+              <span *ngIf="c.position"> - {{ c.position }}</span>
+              <span *ngIf="c.phone"> ({{ c.phone }})</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <button type="button" (click)="addContact()">+ Add contact</button>
-
-  <hr />
-
-  <button type="submit">Register</button>
-</form>
+</div>
